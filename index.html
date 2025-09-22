@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>MonSite - Utilisateurs</title>
+</head>
+<body>
+  <h1>Liste des utilisateurs</h1>
+  <ul id="users-list"></ul>
+
+  <h2>Ajouter un utilisateur</h2>
+  <input type="text" id="username" placeholder="Nom de l'utilisateur" />
+  <button id="add-user">Ajouter</button>
+
+  <script>
+    const apiUrl = "http://localhost:3000/users";
+
+    // Charger et afficher les utilisateurs
+    async function loadUsers() {
+      const response = await fetch(apiUrl);
+      const users = await response.json();
+      const list = document.getElementById("users-list");
+      list.innerHTML = ""; // vider la liste avant de la recharger
+      users.forEach(user => {
+        const li = document.createElement("li");
+        li.textContent = user;
+        list.appendChild(li);
+      });
+    }
+
+    // Ajouter un utilisateur
+    document.getElementById("add-user").addEventListener("click", async () => {
+      const name = document.getElementById("username").value;
+      if (!name) return;
+
+      await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name })
+      });
+
+      document.getElementById("username").value = "";
+      loadUsers(); // recharger la liste après ajout
+    });
+
+    // Charger les utilisateurs au démarrage
+    loadUsers();
+  </script>
+</body>
+</html>
